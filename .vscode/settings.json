@@ -1,0 +1,5 @@
+{
+    "liveServer.settings.root": "./dist",
+    "html.format.wrapLineLength": 80,
+    "liveServer.settings.port": 5502,
+}

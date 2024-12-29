@@ -1,0 +1,48 @@
+{
+  "name": "webgl-project",
+  "dependencies": {
+    "@barba/core": "^2.9.7",
+    "@parcel/core": "^2.6.2",
+    "glsl-easings": "^1.0.0",
+    "glsl-hsl2rgb": "^1.1.0",
+    "glsl-map": "^1.0.1",
+    "glsl-noise": "0.0.0",
+    "glsl-rotate": "^1.1.0",
+    "glslify": "^7.1.1",
+    "glslify-bundle": "^5.1.1",
+    "glslify-deps": "^1.3.2",
+    "gsap": "^3.10.4",
+    "html2canvas": "^1.4.1",
+    "lenis": "^1.1.16",
+    "lil-gui": "^0.17.0",
+    "lodash": "^4.17.21",
+    "normalize.css": "^8.0.1",
+    "regenerator-runtime": "^0.13.9",
+    "smooth-scrollbar": "^8.7.4",
+    "stats-js": "^1.0.1",
+    "svgo": "3.0.2",
+    "three": "^0.152.0"
+  },
+  "devDependencies": {
+    "@parcel/optimizer-htmlnano": "^2.8.3",
+    "@parcel/transformer-glsl": "^2.6.2",
+    "@parcel/transformer-sass": "^2.6.2",
+    "parcel": "^2.6.2",
+    "parcel-reporter-static-files-copy": "^1.3.4",
+    "rimraf": "^3.0.2"
+  },
+  "scripts": {
+    "clean": "npx rimraf dist .parcel-cache",
+    "sec1": "npm run clean && parcel watch ./01_three_basic/**/index.html --dist-dir ./dist",
+    "sec2": "npm run clean && parcel watch ./02_webgl/**/index.html --dist-dir ./dist",
+    "sec3": "npm run clean && parcel watch ./03_three_shader/**/index.html --dist-dir ./dist",
+    "sec4": "npm run clean && parcel watch ./04_three_advance/**/index.html --dist-dir ./dist",
+    "sec5": "npm run clean && parcel watch ./05_extra/**/index.html --dist-dir ./dist",
+    "sec6": "npm run clean && parcel watch ./06_shincode_udemy/**/index.html --dist-dir ./dist",
+    "sec7": "npm run clean && parcel watch ./07_animations/**/index.html --dist-dir ./dist"
+  },
+  "staticFiles": {
+    "staticPath": "img",
+    "staticOutPath": "img"
+  }
+}
