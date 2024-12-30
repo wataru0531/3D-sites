@@ -1,0 +1,218 @@
+
+
+/**************************************************************
+
+Project Name
+https://www.youtube.com/watch?v=V8GnInBUMLo&t=26s
+
+***************************************************************/
+
+/* Reset CSS */
+
+:root{
+  --primary: #0c0c0c;
+  --secondary: #efefef;
+}
+
+/* @font-face → カスタムフォント（ウェブフォント）を定義 */
+/* 
+  フォント名(任意) Ogg
+  format → フォントファイルの形式
+  woff2 → Web Open Font Format 2 (WOFF2) というフォント形式
+          ウェブ用に最適化。圧縮されているため、軽量で、ページの読み込み速度が改善されやすい形式
+*/
+@font-face {
+  font-family: "Ogg";
+  src: url(./Ogg-Custom.woff2) format("woff2");
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  -webkit-tap-highlight-color: transparent;
+  color: #131313;
+  background-color: #dadada;
+  font-family: "Ogg", "游ゴシック体", YuGothic, "游ゴシック Medium",
+    "Yu Gothic Medium", "游ゴシック", "Yu Gothic", sans-serif;
+  font-size: 1.5rem;
+  /* font-size: calc(100vw / 1920 * 10); */
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-wrap: break-word;
+  position: relative;
+  z-index: -9999;
+
+  /* -ms- ... Microsoftの略。主にMicrosoft製品の独自機能や仕様を示すために使用され */
+  -ms-overflow-style: none; /* IE and 旧Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* webkit系 Chrome Safari Edge */
+/* すべての要素にあてる */
+::-webkit-scrollbar{
+  display: none;
+}
+
+body.hidden {
+  overflow: hidden;
+}
+
+
+/* pcの電話番号発信対応 */
+@media screen and (min-width: 768px) {
+  a[href^="tel:"] {
+    pointer-events: none;
+  }
+}
+
+/* ホバー */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Remove default padding */
+ul,
+ol {
+  padding: 0;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Remove list styles on ul, ol elements with a class attribute */
+ul,
+ol {
+  list-style: none;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Natural flow and rhythm in articles by default */
+article > * + * {
+  margin-top: 1em;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Blur images when they have no alt attribute */
+/* img:not([alt]) {
+  -webkit-filter: blur(10px);
+          filter: blur(10px);
+} */
+
+label {
+  display: block;
+}
+
+input,
+button,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  background-image: none;
+  border: none;
+  /* border: 1px solid #333; */
+  border-radius: 0;
+  font-family: inherit;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input[type="submit"],
+input[type="button"],
+label,
+button,
+select {
+  cursor: pointer;
+}
+
+
+
+canvas {
+  position: absolute;
+  z-index: -2;
+}
+
+.container{
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.items-container{
+  height: 90%;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* position: absolute; */
+  /* left: 10%; */
+  /* top: 20%; */
+  /* translate: 0 -50%; */
+}
+
+.item{
+  flex: 1;
+  font-weight: 500;
+  font-size: 10vw;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.118);
+  cursor: pointer;
+  transition: 1s;
+}

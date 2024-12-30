@@ -1,0 +1,342 @@
+
+
+/**************************************************************
+
+THREE JS: image RGB Split / Distortion On Scroll
+https://www.youtube.com/watch?v=DdQn82X1G3I&t=39s
+
+***************************************************************/
+
+/* Reset CSS */
+
+:root{
+  font-size: 12px;
+
+  --color-text: #f0f0f0;
+  --color-bg: #101014;
+  --color-link: #818798;
+  --color-link-hover: #fff;
+  --color-title: #7f7f8f;
+  --color-year: #b9b3af;
+  --img-ratio: 1.3;
+  --s: 1;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  font-family: "Harmond", "游ゴシック体", YuGothic, "游ゴシック Medium",
+    "Yu Gothic Medium", "游ゴシック", "Yu Gothic", sans-serif;
+  font-size: 1.5rem;
+  /* font-size: calc(100vw / 1920 * 10); */
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-wrap: break-word;
+  position: relative;
+  z-index: -9999;
+
+  /* -ms- ... Microsoftの略。主にMicrosoft製品の独自機能や仕様を示すために使用され */
+  -ms-overflow-style: none; /* IE and 旧Edge */
+  scrollbar-width: none; /* Firefox */
+
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* webkit系 Chrome Safari Edge */
+/* すべての要素にあてる */
+::-webkit-scrollbar{
+  display: none;
+}
+
+body.hidden {
+  overflow: hidden;
+}
+
+
+/* pcの電話番号発信対応 */
+@media screen and (min-width: 768px) {
+  a[href^="tel:"] {
+    pointer-events: none;
+  }
+}
+
+/* ホバー */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* Remove default padding */
+ul,
+ol {
+  padding: 0;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Remove list styles on ul, ol elements with a class attribute */
+ul,
+ol {
+  list-style: none;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Natural flow and rhythm in articles by default */
+article > * + * {
+  margin-top: 1em;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Blur images when they have no alt attribute */
+/* img:not([alt]) {
+  -webkit-filter: blur(10px);
+          filter: blur(10px);
+} */
+
+label {
+  display: block;
+}
+
+input,
+button,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  background-image: none;
+  border: none;
+  /* border: 1px solid #333; */
+  border-radius: 0;
+  font-family: inherit;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input[type="submit"],
+input[type="button"],
+label,
+button,
+select {
+  cursor: pointer;
+}
+
+/* Page Loader */
+.js .loading::before,
+.js .loading::after {
+  content: "";
+  position: fixed;
+  z-index: 1000;
+}
+
+.js .loading::before {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg);
+}
+
+.js .loading::after {
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  opacity: 0.4;
+  background: var(--color-link);
+  animation: loaderAnim 0.7s linear infinite alternate forwards;
+}
+
+@keyframes loaderAnim {
+  to {
+    opacity: 1;
+    transform: scale3d(0.7, 0.7, 1);
+  }
+}
+
+
+
+/* ここから */
+
+/* header */
+.header{
+  position: relative;
+  z-index: 50;
+  margin: 0 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  pointer-events: auto;
+}
+
+.header__inner{
+  white-space: nowrap;
+}
+
+.header__title{
+  font-weight: bold;
+  display: inline;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.header__svg {
+  height: 0.75rem;
+  margin-left: 0.125rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.header__path{
+  fill: currentColor;
+} 
+
+/* hero */
+
+.hero{
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.hero__inner{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: auto;
+  position: relative;
+
+}
+
+/* これ以下はおそらくJS側から挿入するcss */
+.hero__title{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  /* transform: translate3d(657.5px, 515.5px, 0px) scale(1); */
+  transform-origin: 0px 0px;
+  z-index: -1;
+}
+
+.hero__title-inner{
+  position: absolute;
+  transform: none;
+  top: -515.5px;
+  left: -657.5px;
+  width: 1315px;
+  height: 1031px;
+}
+
+
+.dom-element {
+  width: 100%;
+  height: 100%;
+  font-size: clamp(100px, 17vw, 200px);
+  background-color: #000;
+  display: flex;
+  color: white;
+  align-items: center;
+  padding-left: 3vw;
+  line-height: 0.8;
+  font-weight: 700;
+}
+
+.dom-element p{
+  display: flex;
+  flex-direction: column;
+}
+
+.header__canvas-wrap{
+  width: 100%;
+  height: 100%;
+}
+
+.header__canvas-wrap canvas{
+  display: block;
+
+}
+
+.texts{
+  font-size: 1.125rem;
+  position: fixed;
+  top: 50%;
+  right: 4rem;
+  translate: 0 -50%;
+}
+
+.texts p:nth-child(1){
+  margin-bottom: 1rem;
+  opacity: .5;
+}
+
+.texts p:nth-child(3){
+  margin-top: 1rem;
+  opacity: .5;
+}
+
+/* footer */
+.footer{
+  padding: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+}

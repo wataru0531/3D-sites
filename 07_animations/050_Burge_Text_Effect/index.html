@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      THREE JS: image RGB Split / Distortion On Scroll | Conor
+    </title>
+    <meta
+      name="description"
+      content="
+        THREE JS: image RGB Split / Distortion On Scroll
+        https://www.youtube.com/watch?v=DdQn82X1G3I&t=39s
+      "
+    />
+
+    <link rel="stylesheet" href="./style.css" />
+
+    <script type="module" defer src="./js/app.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <main class="font-sans">
+        <header class="header">
+          <div class="header__inner">
+            <h1 class="header__title">Bulge Text Effect</h1>
+            <a title="Read_the_article" href="https://tympanus.net/codrops/?p=76625">
+              <svg class="header__svg" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="header__path" fill-rule="evenodd" clip-rule="evenodd" d="M1.00006 0.25H11.7501V11H10.2501V2.81066L1.53039 11.5303L0.469727 10.4697L9.1894 1.75H1.00006V0.25Z" fill="currentColor"></path>
+              </svg>
+            </a>
+          </div>
+        </header>
+
+        <div class="hero">
+          <div class="hero__inner">
+            <!-- ここおそらくJSでtransform: translate3d();をかける -->
+            <div class="hero__title">
+              <div class="hero__title-inner">
+                <!-- この部分はテクスチャとして使う -->
+                <div class="dom-element">
+                  <p>WHEN <br>WILL <br>WE <br>MEET ?<br></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="header__canvas-wrap">
+              <!-- 多分これはJS側から挿入、CSSも -->
+              <!-- <canvas data-engine="three.js r162" width="1812" height="1808"></canvas> -->
+              <canvas id="js-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="texts">
+          <p>TENDER</p>
+          <p>App that helps <br>to find your best partner</p>
+          <p class="mt-40 opacity-50">LAUNCH IN 2024</p>
+        </div>
+
+        <footer class="footer">
+          <p>Made by <a href="https://twitter.com/romanjeanelie">@romanjeanelie</a> for <a href="https://twitter.com/codrops">@codrops</a>
+          </p>
+          <a href="https://tympanus.net/codrops/demos" class="all-demos">All Demos</a>
+        </footer>
+
+      </main>
+
+
+      <!-- <main class="font-sans">
+        <header class="relative z-50 mx-7 flex max-lg:flex-col justify-between py-6 border-b border-white/60 pointer-events-auto">
+          <div class="whitespace-nowrap">
+            <h1 class="font-bold inline align-middle mr-2">Bulge Text Effect</h1>
+            <a title="Read the article" href="https://tympanus.net/codrops/?p=76625">
+              <svg class="h-3 ml-0.5 inline-block align-middle" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M1.00006 0.25H11.7501V11H10.2501V2.81066L1.53039 11.5303L0.469727 10.4697L9.1894 1.75H1.00006V0.25Z" fill="currentColor"></path>
+              </svg></a>
+          </div>
+        </header>
+
+        <div class="absolute top-0 left-0 h-screen w-screen">
+          <div style="position: relative; width: 100%; height: 100%; overflow: hidden; pointer-events: auto;">
+            <div style="position: absolute; top: 0px; left: 0px; transform: translate3d(453px, 452px, 0px) scale(1); transform-origin: 0px 0px; z-index: -1;">
+              <div style="position: absolute; transform: none; top: -452px; left: -453px; width: 906px; height: 904px;">
+                <div class="dom-element">
+                  <p class="flex flex-col">WHEN <br>WILL <br>WE <br>MEET ?<br></p>
+                </div>
+              </div>
+            </div>
+            <div style="width: 100%; height: 100%;">
+              <canvas data-engine="three.js r162" width="1812" height="1808" style="display: block; width: 906px; height: 904px;"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute top-1/2 right-16 text-lg">
+          <p class="mb-4 opacity-50">TENDER</p>
+          <p>App that helps <br>to find your best partner</p>
+          <p class="mt-40 opacity-50">LAUNCH IN 2024</p>
+        </div>
+
+        <div class="flex fixed w-full justify-between bottom-0 p-8">
+          <p>Made by <a href="https://twitter.com/romanjeanelie">@romanjeanelie</a> for <a href="https://twitter.com/codrops">@codrops</a>
+          </p>
+          <a href="https://tympanus.net/codrops/demos" class="all-demos">All Demos</a>
+        </div>
+      </main> -->
+    </div>
+  </body>
+</html>
