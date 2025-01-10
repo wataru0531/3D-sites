@@ -38,6 +38,7 @@ import Lenis from 'lenis';
 import gsap from 'gsap';
 import { CustomEase } from 'gsap/all';
 import { 
+
   Mesh, 
   Texture,
   TextureLoader,
