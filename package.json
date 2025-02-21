@@ -29,17 +29,17 @@
     "@parcel/transformer-sass": "^2.6.2",
     "parcel": "^2.6.2",
     "parcel-reporter-static-files-copy": "^1.3.4",
+    "postcss": "^8.5.2",
+    "postcss-nested": "^7.0.2",
     "rimraf": "^3.0.2"
   },
   "scripts": {
     "clean": "npx rimraf dist .parcel-cache",
-    "sec1": "npm run clean && parcel watch ./01_three_basic/**/index.html --dist-dir ./dist",
-    "sec2": "npm run clean && parcel watch ./02_webgl/**/index.html --dist-dir ./dist",
-    "sec3": "npm run clean && parcel watch ./03_three_shader/**/index.html --dist-dir ./dist",
-    "sec4": "npm run clean && parcel watch ./04_three_advance/**/index.html --dist-dir ./dist",
-    "sec5": "npm run clean && parcel watch ./05_extra/**/index.html --dist-dir ./dist",
-    "sec6": "npm run clean && parcel watch ./06_shincode_udemy/**/index.html --dist-dir ./dist",
-    "sec7": "npm run clean && parcel watch ./07_animations/**/index.html --dist-dir ./dist"
+    "sec1": "npm run clean && parcel watch ./01_scroll/**/index.html --dist-dir ./dist",
+    "sec2": "npm run clean && parcel watch ./02_hover/**/index.html --dist-dir ./dist",
+    "sec3": "npm run clean && parcel watch ./03_menu/**/index.html --dist-dir ./dist",
+    "sec4": "npm run clean && parcel watch ./04_shincode_udemy/**/index.html --dist-dir ./dist",
+    "sec5": "npm run clean && parcel watch ./05_gltf/**/index.html --dist-dir ./dist"
   },
   "staticFiles": {
     "staticPath": "img",
