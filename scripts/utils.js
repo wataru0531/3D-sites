@@ -1,20 +1,30 @@
 
+import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export const utils = {
   lerp,
+  distance,
+  lineEq,
+
   setTransform,
   delay,
   reduceText,
   splitTextIntoSpans,
   wrapElements,
   random,
+  getRandomFloat, // ⭐️new
   generateRgb,
   generateHex,
 
   isDevice,
   isTouchDevices,
   shuffleArrayAsync,
+  wrap,
   mapRand,
+  mapRange,
+  setRange,
   animateCounter,
   debounce,
   isCssVariablesSupported,
@@ -28,17 +38,20 @@ export const utils = {
   preloadFonts,
   getCSSVariableValue,
   
-  getMousePos,
+  getMousePosClient,
+  getMousePosPage,
   getClipPos,
   getMapPos,
+  calculateWindowSize,
   calculateInitialTransform,
 
   easeInOut,
   clamp,
-  map,
+  // map, // ⭐️mapRange に変える
   getAllProperties,
   AutoBind,
   getRandomString,
+
 }
 
 // ランダムな文字列を取得
@@ -56,12 +69,28 @@ function getRandomString(_length){
   return result;
 }
 
-
+// 要素の一部分でもビューポートに入っていれば true を返す処理
 function isInViewport(elem){
-  var bounding = elem.getBoundingClientRect();
+  // console.log(elem)
+  const { top, bottom, right, left } = elem.getBoundingClientRect();
+  // console.log(top) // ページの上から要素のtopまで
+  // console.log(bottom); // ページの上から要素のbottomまでの長さ
+  // console.log(right); // ページの左から要素の右まで
+  // console.log(left); // ページの左から要素の左まで
+
   return (
-      (bounding.bottom >= 0 && bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) || bounding.top >= 0 && bounding.top <= (window.innerHeight || document.documentElement.clientHeight)) &&
-      (bounding.right >= 0 && bounding.right <= (window.innerWidth || document.documentElement.clientWidth) || bounding.left >= 0 && bounding.left <= (window.innerWidth || document.documentElement.clientWidth))
+    ( 
+      // bottom が0以上、かつ、bottom がビューポートの高さ以下の時、または、
+      // top が0以上、かつ、top がビューポートの高さ以下の時
+      bottom >= 0 && bottom <= (window.innerHeight || document.documentElement.clientHeight) || 
+      top >= 0 && top <= (window.innerHeight || document.documentElement.clientHeight)
+    ) &&
+    (
+      // rightが0以上、 かつ、ビューポートの幅より小さい時 または、
+      // leftが0以上、かつ、ビューポートの幅より小さい時
+      right >= 0 && right <= (window.innerWidth || document.documentElement.clientWidth) || 
+      left >= 0 && left <= (window.innerWidth || document.documentElement.clientWidth)
+    )
   );
 };
 
@@ -92,9 +121,10 @@ function isCssVariablesSupported() {
 }
 
 // Webフォントローダーで非同期でフォントを読み込む
+// <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script> が必要
 // → Google Fonts、Adobe Fonts、または他のカスタムフォントに対応
 //   adobeフォント: id、googleフォント: 配列で渡ってくる
-// 使用例: Promise.all([preloadImages('.画像のクラス'), preloadFonts('rmd7deq')]).then(() => {}
+// 使用例: Promise.all([preloadImages('.画像のクラス'), preloadFonts('rmd7deq', ['Roboto', 'Lato'])]).then(() => {}
 function preloadFonts(_adobeId, _googleFamilies = []) {
   return new Promise((resolve, reject) => {
     if (!_adobeId && _googleFamilies.length === 0) {
@@ -114,7 +144,7 @@ function preloadFonts(_adobeId, _googleFamilies = []) {
     }
 
     // フォントのロード設定
-    webFontConfig.active = resolve; // activeになったら解決
+    webFontConfig.active = resolve; // ロードが完了して、activeになったら解決
     webFontConfig.inactive = () => {
       reject(new Error('Font loading failed.'));
     };
@@ -238,12 +268,10 @@ function AutoBind(self, { include, exclude } = {}) {
   return self;
 }
 
-
-
 // 数値をある範囲から別の範囲に変換する関数
-// 使い方: num を min1〜max1 の範囲から、min2〜max2 の範囲に変換します。
+// 使い方: num を min1〜max1 の範囲から、min2〜max2 の範囲に変換する
 // 例えば、[0, 100] の値を [0, 1] に正規化したり、逆に [0, 1] を [0, 100] に拡張できる
-export function map(num, min1, max1, min2, max2, round = false) {
+export function mapRange(num, min1, max1, min2, max2, round = false) {
   const num1 = (num - min1) / (max1 - min1);
   const num2 = num1 * (max2 - min2) + min2;
 
@@ -275,18 +303,25 @@ function easeInOut(t){
 // elems ... [span.char, span.char, span.char, span.char, span.char, span.char, span.char, span.char, span.char]
 // wrapType ... 文字をラップした要素
 // wrapClass ... それに付与したいクラス
-function wrapElements(elems, wrapType, wrapClass){
-  elems.forEach(char => { // .char
-    const wrapEl = document.createElement(wrapType); // span生成
-    wrapEl.classList = wrapClass; // .char-wrapを付与
+function wrapElements(elements, wrapType, wrapClass){
+  elements.forEach(element => { // .element
+    const wrapElement = document.createElement(wrapType);
+    wrapElement.classList = wrapClass; 
     
-    // console.log(char.parentNode); // .word
-    char.parentNode.appendChild(wrapEl);
-    wrapEl.appendChild(char);
+    // console.log(element.parentNode); 
+    element.parentNode.appendChild(wrapElement);
+    wrapElement.appendChild(element);
   });
 }
 
 
+// ウインドウサイズを取得
+function calculateWindowSize(){
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight
+  }
+}
 
 // 各画像をx, y, z軸方向に動かす値、回転する角度を返す処理
 // →　ランダムではなく、一定の基準に基づいて均等に動かす
@@ -361,9 +396,14 @@ function getCSSVariableValue(_element, _variableName) {
 
 
 // マウスの位置を取得
-function getMousePos(e) {
+function getMousePosClient(e) {
   return { x : e.clientX,  y : e.clientY };
 };
+
+
+function getMousePosPage(e){
+  return { x: e.pageX, y: e.pageY }
+}
 
 // クリップ座標  中央が(0, 0)で、-1 〜 1 で返す
 function getClipPos(e) {
@@ -386,10 +426,10 @@ function getMapPos(_width, _height){
 }
 
 
-function initLenis() {
+function initLenis(options = {}) {
   // Lenisとgsap(ScrollTrigger)の更新を連動させる仕組みを構築
   // gsapの内部のtickerが独自に動く仕組みになっていて、それをlenisと同期していく
-  const lenis = new Lenis();
+  const lenis = new Lenis(options);
 
   // Lenisでスクロールが発生するたびに、ScrollTrigger.updateを発火させる
   // この設定により、スクロール位置の変化に合わせてScrollTriggerが更新され、アニメーションが同期して動作する
@@ -426,11 +466,10 @@ function debounce(_callback, _delay){
 
     timerId = setTimeout(() => {
       // console.log(timerId)
-      // console.log("callback done!!")
-      // console.log(...args)
+      // console.log(...args) // イベントオブジェクト
+      // console.log(this); // 呼び出し元を参照する
 
-      _callback(...args);
-      // _callback.apply(this, args); // thisのコンテキストを使いたい場合
+      _callback.apply(this, args); // thisのコンテキストを使いたい場合
     }, _delay);
   }
 }
@@ -457,11 +496,15 @@ async function fetchJsonData(_url, _variableName){
 }
 
 // 画像を生成(imgタグ)し、画像のロードの完了を待つ関数
+// → srcで読み込みが始まり、完了したらonload発火 → resolve発火でimgを返す
 function loadImage(_src){
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = reject;
+    img.onerror = (err) => {
+      console.error(`Failed to load image: ${_src}`, err);
+      reject(err);
+    };
     img.src = _src;
   })
 }
@@ -487,7 +530,9 @@ function preloadImages(_selector = 'img') {
     }
     // console.log(element.tagName); // div
     if (element.tagName === 'IMG') { // img要素の場合の処理
+      // console.log("img")
       const src = element.src;
+      // console.log(src)
       if (src) {
         imagePromises.push(utils.loadImage(src));
       }
@@ -517,6 +562,34 @@ function lerp(start, end, t, limit = .001) {
 }
 // console.log(lerp(10, 15, 0.9991));
 
+// 2点間の距離を取得
+function distance(x2, x1, y2, y1) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  // Math.sqrt() ... 与えられた数値の平方根を返す。スクエアルート
+  return Math.sqrt(dx * dx + dy * dy);
+  // return Math.hypot(a, b); と同じ
+}
+// console.log(distance(0, 0, 3, 4)); // 5 (3-4-5の三角形)
+
+
+// 「2点(x1, y1)と(x2, y2)を通る直線上における、任意のx(=currentVal)に対するyを求める関数」
+// → 算出する値は別にy1　〜 y2に収まるものではないし、２点をいれるのは単に傾きと切片を得るためだけ。
+// line equation → 直線の方程式
+// this.dmScale = Math.min(lineEq(50, 0, 140, 0, mouseDistance), 50);
+function lineEq(x2, x1, y2, y1, currentVal){
+  // y = mx + b
+
+  const m = (y2 - y1) / (x2 - x1); // 傾き
+                                 //  →　この値が大きければ大きいほど返る値が大きくなる。
+  // console.log(m); // 2.8
+  
+  const b = y1 - m * x1; // 切片
+  // console.log(b); // ここでは、0
+  
+  return m * currentVal + b;
+};
 
 // transformを付与。_elはDOM
 function setTransform(_el, _transform) {
@@ -527,7 +600,6 @@ function setTransform(_el, _transform) {
 function delay(time){
   return new Promise(resolve => setTimeout(resolve, time))
 }
-
 
 
 // 文字をspanでラップする関数
@@ -568,7 +640,15 @@ function splitTextIntoSpans(_selector){
 // ランダムな整数値を取得
 function random(min, max) {
   const num = Math.floor(Math.random() * (max - min)) + min;
+  // console.log(num)
   return num;
+}
+
+// ランダムな値を小数で取得
+function getRandomFloat(min, max, decimals = 2) {
+  const num = Math.random() * (max - min) + min;
+
+  return Number(num.toFixed(decimals)); // toFixedは文字列になるので数値型にして返す
 }
 
 // rgbカラーコードを生成
@@ -649,14 +729,7 @@ async function shuffleArrayAsync(_array){
   return newArray;
 }
 
-function distance(x1, y1, x2, y2) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
 
-  // Math.sqrt() ... 与えられた数値の平方根を返す。スクエアルート
-  return Math.sqrt(dx * dx + dy * dy);
-}
-// console.log(distance(0, 0, 3, 4)); // 5 (3-4-5の三角形)
 
 // インデックスが範囲を超えた場合に適切にラップする関数
 // 配列が[0, 1, 2]とあったとして、4のインデックスに増えるところを次のインデックスを0にする
@@ -677,6 +750,33 @@ function mapRand(min, max, isInt = false) {
 
   return rand;
 }
+
+
+// 数値をある範囲から別の範囲に変換する関数
+// 使い方: num を min1〜max1 の範囲から、min2〜max2 の範囲に変換する
+// 例えば、[0, 100] の値を [0, 1] に正規化したり、逆に [0, 1] を [0, 100] に拡張できる
+function mapRange(num, min1, max1, min2, max2, round = false) {
+  const num1 = (num - min1) / (max1 - min1);
+  const num2 = num1 * (max2 - min2) + min2;
+
+  if(round) return Math.round(num2);
+
+  return num2;
+}
+
+
+// ✅-数値 〜　数値　の範囲の配列のオブジェクトにする
+// 例:
+// 引数 {x: 30, y: 20, z: 0} → {x: [-30, 30], y: [-20, 20], z: [0, 0]};
+function setRange(obj){
+  for (let k in obj) {
+    if (obj[k] == undefined) {
+      obj[k] = [0, 0];
+    } else if (typeof obj[k] === "number") {
+      obj[k] = [-1 * obj[k], obj[k]];
+    }
+  }
+};
 
 
 // カウンター

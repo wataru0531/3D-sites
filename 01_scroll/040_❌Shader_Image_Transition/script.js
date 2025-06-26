@@ -10,6 +10,8 @@ import gsap from 'gsap';
 import MeshItem from './MeshItem';
 import Loader from './js/Loader';
 
+import { utils } from "/scripts/utils.js";
+
 
 const canvas = document.getElementById('canvas');
 const scene = new Scene()
@@ -104,14 +106,13 @@ function observeScroll() {
   window.addEventListener('scroll', () => {
     scrollY = window.scrollY
 
-    // 
     // ビューポートの高さに対してのスクロール量の比率
     // let newSection = scrollY / sizes.height;
     // console.log(sizes.height);
     // console.log(newSection);
     // ⭐️Math.round で 四捨五入することでセクション毎の数値が取得できる
     let newSection = Math.round(scrollY / sizes.height);
-    // console.log(newSection);
+    // console.log(newSection);　0 1 2 3
     
     if (currentSection != newSection) {
       // console.log(currentSection);
@@ -148,10 +149,6 @@ function onSectionEnter(_section) {
 // let time = 0
 let targetPosY = -scrollY; // メッシュのy軸の位置
 
-function lerp(a, b, t) {
-    return a + (b - a) * t;
-}
-
 function tick(){
   // const elapsedTime = clock.getElapsedTime();
   // console.log(elapsedTime);
@@ -160,7 +157,7 @@ function tick(){
   // time = elapsedTime;
 
   // 下スクロールならマイナス、上ならプラスの値が返る → 3Dの-1から1の座標に合わす
-  targetPosY = lerp(targetPosY, -scrollY, 0.1);
+  targetPosY = utils.lerp(targetPosY, -scrollY, 0.1);
   // console.log(targetPosY);
 
   camera.position.y = targetPosY;

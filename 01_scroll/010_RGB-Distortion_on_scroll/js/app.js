@@ -83,7 +83,7 @@ let target = 0;
 let ease = .075;
 
 function init(){
-    document.body.style.height = `${scrollable.getBoundingClientRect().height}px`;
+  document.body.style.height = `${scrollable.getBoundingClientRect().height}px`;
 }
 
 function smoothScroll(){
