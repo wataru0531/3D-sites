@@ -21,7 +21,7 @@ export const fragmentShader = `
 
   varying vec2 vUv;
 
-  vec2 getCoverUv(vec2 uv, vec2 textureSize){
+  vec2 getCoverUV(vec2 uv, vec2 textureSize){
     vec2 s = uResolution / textureSize;
     float scale = max(s.x, s.y);
     vec2 scaledSize = textureSize * scale;
@@ -37,12 +37,12 @@ export const fragmentShader = `
     return uv - scaledDirection * factor;
   }
 
-  struct LenisDistortion {
+  struct LensDistortion {
     vec2 distortedUV;
     float inside;
-  }
+  };
 
-  LenisDistortion getLenisDistortion(
+  LensDistortion  getLensDistortion(
     vec2 p,
     vec2 uv,
     vec2 sphereCenter,
@@ -53,6 +53,7 @@ export const fragmentShader = `
     float focusRadius = sphereRadius * focusFactor;
     float focusStrength = sphereRadius / 3000.0;
     float focusSdf = length(sphereCenter - p) - sphereRadius;
+    float sphereSdf = length(sphereCenter - p) - focusFactor;
     float inside = smoothstep(0.0, 1.0, -sphereSdf / (sphereRadius * 0.001));
     float magnifierFactor = focusSdf / (sphereRadius - focusRadius);
     float mFactor = clamp(magnifierFactor * inside, 0.0, 1.0);
@@ -62,7 +63,7 @@ export const fragmentShader = `
 
     vec2 distortedUV = getDistortedUv(uv, distortionDirection, distortionFactor);
 
-    return LenisDistortion(distortedUV, inside);
+    return LensDistortion(distortedUV, inside);
   }
 
   void main(){
@@ -74,7 +75,7 @@ export const fragmentShader = `
 
     float maxRadius = length(uResolution) * 1.5;
     float bubbleRadius = uProgress * maxRadius;
-    float sphereCenter = center * uResolution;
+    vec2 sphereCenter = center * uResolution;
     float focusFactor = 0.25;
 
     float dist = length(sphereCenter - p);
@@ -82,11 +83,11 @@ export const fragmentShader = `
 
     vec4 currentImg = texture2D(uTexture1, uv1);
 
-    lenisDistortion distortion = getLenisDistortion(
+    LensDistortion distortion = getLensDistortion(
       p, uv2, sphereCenter, bubbleRadius, focusFactor
     );
 
-    vec4 newImg = texture2d(uTexture2, distortion.distortedUV);
+    vec4 newImg = texture2D(uTexture2, distortion.distortedUV);
 
     float finalMask = max(mask, 1.0 - distortion.inside);
     
