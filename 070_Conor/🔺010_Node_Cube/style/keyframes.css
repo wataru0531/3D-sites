@@ -1,0 +1,72 @@
+
+
+.glitch {
+	animation-name: glitch-anim;
+	animation-duration: 4s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+
+/* グリッチのエフェクト */
+@keyframes glitch-anim {
+	0% { 
+		/* x軸に-5px動かす */
+		/* 
+			scale3d ... (x, y, z）に対してスケーリング（拡大縮小）
+			xに-1 ... y軸を中心に反転
+			yに-1 ... x軸を中心に反転
+			zに-1 ... 変化ないように見える
+								→ perspective-originで視点を変更しないとz軸の奥行きは見えない
+
+			なぜ反転しているかのように見えるか？
+			scale3d(x, y, z) は、要素を x、y、z 軸方向に拡大・縮小する
+			... 1 は等倍（拡大・縮小なし）
+					-1 を渡すと、その軸方向で反転が発生
+					x軸に -1 を渡す場合：x軸方向のスケールが反転
+					これは、視覚的には「要素が左右反転（鏡像のように見える）」という効果を生む
+					*/
+		transform: translate3d(-5px, 0, 0) scale3d(-1, -1, 1);
+		/* x軸、y軸で反転。次にtransformが記述されるまで維持される */
+		clip-path: polygon(0 20%, 100% 20%, 100% 21%, 0 21%);
+	
+		/* background-color: white; */
+	}
+	2% {
+		clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%);
+	}
+	4% {
+		clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%);
+	}
+	5% {
+		clip-path: polygon(0 50%, 100% 50%, 100% 20%, 0 20%);
+	}
+	6% {
+		clip-path: polygon(0 70%, 100% 70%, 100% 70%, 0 70%);
+	}
+	7% {
+		clip-path: polygon(0 80%, 100% 80%, 100% 80%, 0 80%);
+	}
+	8% {
+		clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%);
+	}
+	9% {
+		/* ここまで同じtransformが適用される */
+		clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%);
+	}
+	9.9% {
+		/* 
+			9.9%までは反転した状態に確実にさせるために9.9%の地点でも同じ内容のtransformを適用している 
+			→ 0%と10%の間だけでtransformを指定した場合はtransitionが効いてしまう。
+		*/
+		transform: translate3d(-5px, 0, 0) scale3d(-1, -1, 1);
+	}
+	10%, 100% {
+		/* この時点で反転された状態から元に戻る */
+		transform: translate3d(0,0,0) scale3d(1, 1, 1);
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+
+		/* 
+			10% から 100% の間はこのブロックのCSSが適用される
+		*/
+	}
+}

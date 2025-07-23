@@ -1,7 +1,4 @@
 
-import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export const utils = {
   lerp,
@@ -17,13 +14,13 @@ export const utils = {
   getRandomFloat, // ⭐️new
   generateRgb,
   generateHex,
-
+  
   isDevice,
   isTouchDevices,
   shuffleArrayAsync,
   wrap,
-  mapRand, // ⭐️
-  mapRange,
+  mapRand,
+  mapRange, // ⭐️
   setRange,
   animateCounter,
   debounce,
@@ -47,11 +44,50 @@ export const utils = {
 
   easeInOut,
   clamp,
+  map,
   getAllProperties,
   AutoBind,
   getRandomString,
 
 }
+
+// 線形補間 t...補完係数
+function lerp(start, end, t, limit = .001) {
+  let current = start * (1 - t) + end * t;
+
+  // end と currentの中間値の値が.001未満になれば、endを返す(要調整)
+  if (Math.abs(end - current) < limit) current = end;
+
+  return current;
+}
+// console.log(lerp(10, 15, 0.9991));
+
+// 2点間の距離を取得
+function distance(x2, x1, y2, y1) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  // Math.sqrt() ... 与えられた数値の平方根を返す。スクエアルート
+  return Math.sqrt(dx * dx + dy * dy);
+  // return Math.hypot(a, b); と同じ
+}
+// console.log(distance(0, 0, 3, 4)); // 5 (3-4-5の三角形)
+
+// 「2点(x1, y1)と(x2, y2)を通る直線上における、任意のx(=currentVal)に対するyを求める関数」
+// line equation → 直線の方程式
+// this.dmScale = Math.min(lineEq(50, 0, 140, 0, mouseDistance), 50);
+function lineEq(x2, x1, y2, y1, currentVal){
+  // y = mx + b
+
+  var m = (y2 - y1) / (x2 - x1); // 傾き
+                                 //  →　この値が大きければ大きいほど返る値が大きくなる。
+  // console.log(m); // 2.8
+  var b = y1 - m * x1; // 切片
+  // console.log(b); // ここでは、0
+  
+  return m * currentVal + b;
+};
+
 
 // ランダムな文字列を取得
 function getRandomString(_length){
@@ -67,31 +103,6 @@ function getRandomString(_length){
   // console.log(result);
   return result;
 }
-
-// 要素の一部分でもビューポートに入っていれば true を返す処理
-function isInViewport(elem){
-  // console.log(elem)
-  const { top, bottom, right, left } = elem.getBoundingClientRect();
-  // console.log(top) // ページの上から要素のtopまで
-  // console.log(bottom); // ページの上から要素のbottomまでの長さ
-  // console.log(right); // ページの左から要素の右まで
-  // console.log(left); // ページの左から要素の左まで
-
-  return (
-    ( 
-      // bottom が0以上、かつ、bottom がビューポートの高さ以下の時、または、
-      // top が0以上、かつ、top がビューポートの高さ以下の時
-      bottom >= 0 && bottom <= (window.innerHeight || document.documentElement.clientHeight) || 
-      top >= 0 && top <= (window.innerHeight || document.documentElement.clientHeight)
-    ) &&
-    (
-      // rightが0以上、 かつ、ビューポートの幅より小さい時 または、
-      // leftが0以上、かつ、ビューポートの幅より小さい時
-      right >= 0 && right <= (window.innerWidth || document.documentElement.clientWidth) || 
-      left >= 0 && left <= (window.innerWidth || document.documentElement.clientWidth)
-    )
-  );
-};
 
 // CSS変数がサポートされているかどうかをチャックする関数
 function isCssVariablesSupported() {
@@ -119,11 +130,35 @@ function isCssVariablesSupported() {
   }
 }
 
+// 要素の一部分でもビューポートに入っていれば true を返す処理
+function isInViewport(elem){
+  // console.log(elem)
+  const { top, bottom, right, left } = elem.getBoundingClientRect();
+  // console.log(top) // ページの上から要素のtopまで
+  // console.log(bottom); // ページの上から要素のbottomまでの長さ
+  // console.log(right); // ページの左から要素の右まで
+  // console.log(left); // ページの左から要素の左まで
+
+  return (
+    ( 
+      // bottom が0以上、かつ、bottom がビューポートの高さ以下の時、または、
+      // top が0以上、かつ、top がビューポートの高さ以下の時
+      bottom >= 0 && bottom <= (window.innerHeight || document.documentElement.clientHeight) || 
+      top >= 0 && top <= (window.innerHeight || document.documentElement.clientHeight)
+    ) &&
+    (
+      // rightが0以上、 かつ、ビューポートの幅より小さい時 または、
+      // leftが0以上、かつ、ビューポートの幅より小さい時
+      right >= 0 && right <= (window.innerWidth || document.documentElement.clientWidth) || 
+      left >= 0 && left <= (window.innerWidth || document.documentElement.clientWidth)
+    )
+  );
+};
+
 // Webフォントローダーで非同期でフォントを読み込む
-// <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script> が必要
 // → Google Fonts、Adobe Fonts、または他のカスタムフォントに対応
-//   adobeフォント: id、googleフォント: 配列で渡ってくる
-// 使用例: Promise.all([preloadImages('.画像のクラス'), preloadFonts('rmd7deq', ['Roboto', 'Lato'])]).then(() => {}
+// adobeフォントはidで、googleフォントの場合は配列
+// 使用例: Promise.all([preloadImages('.画像のクラス'), preloadFonts('rmd7deq')]).then(() => {}
 function preloadFonts(_adobeId, _googleFamilies = []) {
   return new Promise((resolve, reject) => {
     if (!_adobeId && _googleFamilies.length === 0) {
@@ -143,7 +178,7 @@ function preloadFonts(_adobeId, _googleFamilies = []) {
     }
 
     // フォントのロード設定
-    webFontConfig.active = resolve; // ロードが完了して、activeになったら解決
+    webFontConfig.active = resolve; // 読み込みが完了したら解決
     webFontConfig.inactive = () => {
       reject(new Error('Font loading failed.'));
     };
@@ -155,7 +190,6 @@ function preloadFonts(_adobeId, _googleFamilies = []) {
     }
   });
 }
-
 
 // 指定されたオブジェクトの全てのプロパティ(メソッドなど)を、プロトタイプチェーンを遡って取得する関数
 // →　ただし、最後のObjectのプロパティは取得しない。
@@ -268,6 +302,7 @@ function AutoBind(self, { include, exclude } = {}) {
 }
 
 
+
 // 数値をある範囲から別の範囲に変換する関数
 // 使い方: num を min1〜max1 の範囲から、min2〜max2 の範囲に変換します。
 // 例えば、[0, 100] の値を [0, 1] に正規化したり、逆に [0, 1] を [0, 100] に拡張できる
@@ -303,14 +338,14 @@ function easeInOut(t){
 // elems ... [span.char, span.char, span.char, span.char, span.char, span.char, span.char, span.char, span.char]
 // wrapType ... 文字をラップした要素
 // wrapClass ... それに付与したいクラス
-function wrapElements(elements, wrapType, wrapClass){
-  elements.forEach(element => { // .element
-    const wrapElement = document.createElement(wrapType);
-    wrapElement.classList = wrapClass; 
+function wrapElements(elems, wrapType, wrapClass){
+  elems.forEach(char => { // .char
+    const wrapEl = document.createElement(wrapType); // span生成
+    wrapEl.classList = wrapClass; // .char-wrapを付与
     
-    // console.log(element.parentNode); 
-    element.parentNode.appendChild(wrapElement);
-    wrapElement.appendChild(element);
+    // console.log(char.parentNode); // .word
+    char.parentNode.appendChild(wrapEl);
+    wrapEl.appendChild(char);
   });
 }
 
@@ -322,6 +357,7 @@ function calculateWindowSize(){
     height: window.innerHeight
   }
 }
+
 
 // 各画像をx, y, z軸方向に動かす値、回転する角度を返す処理
 // →　ランダムではなく、一定の基準に基づいて均等に動かす
@@ -401,9 +437,12 @@ function getMousePosClient(e) {
 };
 
 
+
+//
 function getMousePosPage(e){
   return { x: e.pageX, y: e.pageY }
 }
+
 
 // クリップ座標  中央が(0, 0)で、-1 〜 1 で返す
 function getClipPos(e) {
@@ -424,6 +463,7 @@ function getMapPos(_width, _height){
     y: clipPos.y * _height / 2
   }
 }
+
 
 
 function initLenis(options = {}) {
@@ -466,10 +506,11 @@ function debounce(_callback, _delay){
 
     timerId = setTimeout(() => {
       // console.log(timerId)
-      // console.log(...args) // イベントオブジェクト
-      // console.log(this); // 呼び出し元を参照する
+      // console.log("callback done!!")
+      // console.log(...args)
 
-      _callback.apply(this, args); // thisのコンテキストを使いたい場合
+      _callback(...args);
+      // _callback.apply(this, args); // thisのコンテキストを使いたい場合
     }, _delay);
   }
 }
@@ -495,8 +536,7 @@ async function fetchJsonData(_url, _variableName){
   }
 }
 
-// 画像を生成(imgタグ)し、画像のロードの完了を待つ関数
-// → srcで読み込みが始まり、完了したらonload発火 → resolve発火でimgを返す
+// 画像を生成し、画像のロードの完了を待つ関数
 function loadImage(_src){
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -510,9 +550,8 @@ function loadImage(_src){
 }
 
 // CSSの背景画像を含めた画像の読み込みが終わるまで待機する関数
-// loading時に使う関数なので画像などは返さない
-function preloadImages(_selector = 'img') {
-  const elements = [...document.querySelectorAll(_selector)];
+function preloadImages(selector = 'img') {
+  const elements = [...document.querySelectorAll(selector)];
   // console.log(elements); // NodeList(79) [div.grid__item-img, ...]
   const imagePromises = [];
 
@@ -526,13 +565,11 @@ function preloadImages(_selector = 'img') {
     // console.log(urlMatch); // (3) ['url("http://127.0.0.1:5501/images/1.avif")', '"', 'http://127.0.0.1:5501/images/1.avif', index: 0, input: 'url("http://127.0.0.1:5501/images/1.avif")', groups: undefined]
     if (urlMatch) {
       const url = urlMatch[2];
-      imagePromises.push(utils.loadImage(url)); 
+      imagePromises.push(utils.loadImage(url));
     }
     // console.log(element.tagName); // div
     if (element.tagName === 'IMG') { // img要素の場合の処理
-      // console.log("img")
       const src = element.src;
-      // console.log(src)
       if (src) {
         imagePromises.push(utils.loadImage(src));
       }
@@ -551,45 +588,8 @@ function generateImageUrls({ _length, _path = "./images", _range, _extension }){
   })
 }
 
-// 線形補間 t...補完係数
-function lerp(start, end, t, limit = .001) {
-  let current = start * (1 - t) + end * t;
-
-  // end と currentの中間値の値が.001未満になれば、endを返す(要調整)
-  if (Math.abs(end - current) < limit) current = end;
-
-  return current;
-}
-// console.log(lerp(10, 15, 0.9991));
-
-// 2点間の距離を取得
-function distance(x2, x1, y2, y1) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-
-  // Math.sqrt() ... 与えられた数値の平方根を返す。スクエアルート
-  return Math.sqrt(dx * dx + dy * dy);
-  // return Math.hypot(a, b); と同じ
-}
-// console.log(distance(0, 0, 3, 4)); // 5 (3-4-5の三角形)
 
 
-// 「2点(x1, y1)と(x2, y2)を通る直線上における、任意のx(=currentVal)に対するyを求める関数」
-// → 算出する値は別にy1　〜 y2に収まるものではないし、２点をいれるのは単に傾きと切片を得るためだけ。
-// line equation → 直線の方程式
-// this.dmScale = Math.min(lineEq(50, 0, 140, 0, mouseDistance), 50);
-function lineEq(x2, x1, y2, y1, currentVal){
-  // y = mx + b
-
-  const m = (y2 - y1) / (x2 - x1); // 傾き
-                                 //  →　この値が大きければ大きいほど返る値が大きくなる。
-  // console.log(m); // 2.8
-  
-  const b = y1 - m * x1; // 切片
-  // console.log(b); // ここでは、0
-  
-  return m * currentVal + b;
-};
 
 // transformを付与。_elはDOM
 function setTransform(_el, _transform) {
@@ -601,12 +601,10 @@ function delay(time){
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
-
 // 文字をspanでラップする関数
 // const splitTexts = element.innerHTML.trim().split("");
 // → 文字の配列を引数にわたす
 function reduceText(_splitTexts){
-  // console.log(typeof _splitTexts)
   return _splitTexts.reduce((accu, curr) => {
     // console.log(accu, curr)
     curr = curr.replace(/\s+/, "&nbsp;")
@@ -637,12 +635,28 @@ function splitTextIntoSpans(_selector){
   });
 }
 
+
+// 各要素を、ラップする処理
+// elems ... [span.char, span.char, span.char, span.char, span.char, span.char, span.char, span.char, span.char]
+// wrapType ... 文字をラップした要素
+// wrapClass ... それに付与したいクラス
+function wrapElements(elems, wrapType, wrapClass){
+  elems.forEach(char => { // .char
+    const wrapEl = document.createElement(wrapType); // span生成
+    wrapEl.classList = wrapClass; // .char-wrapを付与
+    
+    // console.log(char.parentNode); // .word
+    char.parentNode.appendChild(wrapEl);
+    wrapEl.appendChild(char);
+  });
+}
+
 // ランダムな整数値を取得
 function random(min, max) {
   const num = Math.floor(Math.random() * (max - min)) + min;
-  // console.log(num)
   return num;
 }
+
 
 // ランダムな値を小数で取得
 function getRandomFloat(min, max, decimals = 2) {
@@ -650,6 +664,7 @@ function getRandomFloat(min, max, decimals = 2) {
 
   return Number(num.toFixed(decimals)); // toFixedは文字列になるので数値型にして返す
 }
+
 
 // rgbカラーコードを生成
 function generateRgb() {
@@ -706,6 +721,7 @@ function isTouchDevices(){
   return isTouchDevices;
 }
 
+
 // 配列の要素をランダムにシャッフル。
 // Fisher-Yates（フィッシャー・イェーツ）アルゴリズム
 async function shuffleArrayAsync(_array){
@@ -729,7 +745,14 @@ async function shuffleArrayAsync(_array){
   return newArray;
 }
 
+function distance(x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
 
+  // Math.sqrt() ... 与えられた数値の平方根を返す。スクエアルート
+  return Math.sqrt(dx * dx + dy * dy);
+}
+// console.log(distance(0, 0, 3, 4)); // 5 (3-4-5の三角形)
 
 // インデックスが範囲を超えた場合に適切にラップする関数
 // 配列が[0, 1, 2]とあったとして、4のインデックスに増えるところを次のインデックスを0にする
@@ -750,7 +773,6 @@ function mapRand(min, max, isInt = false) {
 
   return rand;
 }
-
 
 // ✅-数値 〜　数値　の範囲の配列のオブジェクトにする
 // 例:

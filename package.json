@@ -40,7 +40,8 @@
     "sec3": "npm run clean && parcel watch ./03_menu/**/index.html --dist-dir ./dist",
     "sec4": "npm run clean && parcel watch ./04_shincode_udemy/**/index.html --dist-dir ./dist",
     "sec5": "npm run clean && parcel watch ./05_gltf/**/index.html --dist-dir ./dist",
-    "sec6": "npm run clean && parcel watch ./060_sliders/**/index.html --dist-dir ./dist"
+    "sec6": "npm run clean && parcel watch ./060_sliders/**/index.html --dist-dir ./dist",
+    "sec7": "npm run clean && parcel watch ./070_Conor/**/index.html --dist-dir ./dist"
   },
   "staticFiles": {
     "staticPath": "img",
